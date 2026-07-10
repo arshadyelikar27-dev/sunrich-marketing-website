@@ -1,0 +1,8 @@
+# Sunrich Web
+node_modules
+.next
+.env
+.env.local
+.env.production
+out
+dist

@@ -67,12 +67,19 @@ export function HeroSection() {
       });
     };
 
-    /* ── Resize (High-DPI Support) ───────────────────────────── */
+    /* ── Resize (High-DPI Support & iOS Fix) ─────────────────── */
+    let lastW = 0;
+    let lastH = 0;
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
       const w = window.innerWidth;
       const h = window.innerHeight;
       
+      // Prevent resize triggering on iOS URL bar hide/show (only resize if width changes or significant height change)
+      if (lastW === w && Math.abs(lastH - h) < 150) return;
+      lastW = w;
+      lastH = h;
+
+      const dpr = window.devicePixelRatio || 1;
       sizeRef.current = { w, h };
       
       // Set actual canvas hardware pixels
@@ -131,7 +138,7 @@ export function HeroSection() {
       trigger: section,
       start: "top top",
       end: "bottom top",
-      scrub: 0.4,
+      scrub: 0.1, // tighter scrub for iOS momentum scrolling
       onUpdate: (self) => {
         const idx = Math.min(
           Math.round(self.progress * (TOTAL_FRAMES - 1)),
@@ -179,7 +186,7 @@ export function HeroSection() {
       aria-label="Hero — Sunrich Agua pure drinking water"
     >
       {/* ── Sticky viewport ──────────────────────────────────── */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
 
         {/* Canvas — frame animation */}
         <canvas
